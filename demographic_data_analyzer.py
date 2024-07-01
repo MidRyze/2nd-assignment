@@ -9,7 +9,9 @@ def calculate_demographic_data(print_data=True):
         df_temp = []
         if df != '':
             for each in df:
-                if each == '\\':
+                if each == '"':
+                    pass
+                elif each == '\\':
                     df_temp.append('/')
                 else:
                     df_temp.append(each)
@@ -228,6 +230,7 @@ def calculate_demographic_data(print_data=True):
                                 else:
                                     input_error = 'err_5'
                             except: # If numeric
+                                criteria[k] = float(criteria[k])
                                 if criteria[k] == each:
                                     criteria[k] = each
                                     input_error = 0 # Error = False
@@ -241,58 +244,59 @@ def calculate_demographic_data(print_data=True):
             #=== Going through the criteria if multiple/set input (list), trimming the dataset begins here. ===#
             if type(criteria) == list:
                 for k, v in enumerate(criteria):
-                    if '_MT_' in v:
-                        try:
-                            num = float(v[4:]) ##___##; pass
-                            v_df = v_df[v_df[columns[k]] > num] ##___##; print('_MT_ === ',len(v_df))
-                        except:
-                            input_error = ('err_list_1', v)
-                            return input_error
-                    elif '_MTE_' in v:
-                        try:
-                            num = float(v[5:]) ##___##; pass
-                            v_df = v_df[v_df[columns[k]] >= num] ##___##; print('_MTE_ === ',len(v_df))
-                        except:
-                            input_error = ('err_list_1', v)
-                            return input_error
-                    elif '_LT_' in v:
-                        try:
-                            num = float(v[4:]) ##___##; pass
-                            v_df = v_df[v_df[columns[k]] < num] ##___##; print('_LT_ === ',len(v_df))
-                        except:
-                            input_error = ('err_list_1', v)
-                            return input_error
-                    elif '_LTE_' in v:
-                        try:
-                            num = float(v[5:]) ##___##; pass
-                            v_df = v_df[v_df[columns[k]] <= num] ##___##; print('_LTE_ === ',len(v_df))
-                        except:
-                            input_error = ('err_list_1', v)
-                            return input_error
-                    elif '_RG_' in v:
-                        # going through for all 'range' in the criteria set (if any) #
-                        x='' ; num_1 = '' ; num_2 = '' ; next = 0   # counters used for this loop of range only
-                        for key, val in enumerate(v):
-                            if val == ',':
-                                x=''
-                                next = 1
-                            if val in '1234567890':
-                                if next == 1:
-                                    num_2 = num_2+val
-                                else:
-                                    num_1 = num_1+val
-                                pass
-                        try:
-                            num_1, num_2 = map(float,(num_1, num_2)) #; print(num_1, num_2)
-                            v_df = v_df[v_df[columns[k]] >= num_1] ; v_df = v_df[v_df[columns[k]] <= num_2]
-                            x='' ; num_1 = '' ; num_2 = '' ; next = 0  # resets all of the counters for range only
-                            ##___## print('_RG_ === ',len(v_df))
-                            if v_df.empty:
-                                input_error = 'err_7'
+                    if type(v) == str:
+                        if '_MT_' in v:
+                            try:
+                                num = float(v[4:]) ##___##; pass
+                                v_df = v_df[v_df[columns[k]] > num] ##___##; print('_MT_ === ',len(v_df))
+                            except:
+                                input_error = ('err_list_1', v)
                                 return input_error
-                        except:
-                            input_error = ('err_list_1', v)
-                            return input_error
+                        elif '_MTE_' in v:
+                            try:
+                                num = float(v[5:]) ##___##; pass
+                                v_df = v_df[v_df[columns[k]] >= num] ##___##; print('_MTE_ === ',len(v_df))
+                            except:
+                                input_error = ('err_list_1', v)
+                                return input_error
+                        elif '_LT_' in v:
+                            try:
+                                num = float(v[4:]) ##___##; pass
+                                v_df = v_df[v_df[columns[k]] < num] ##___##; print('_LT_ === ',len(v_df))
+                            except:
+                                input_error = ('err_list_1', v)
+                                return input_error
+                        elif '_LTE_' in v:
+                            try:
+                                num = float(v[5:]) ##___##; pass
+                                v_df = v_df[v_df[columns[k]] <= num] ##___##; print('_LTE_ === ',len(v_df))
+                            except:
+                                input_error = ('err_list_1', v)
+                                return input_error
+                        elif '_RG_' in v:
+                            # going through for all 'range' in the criteria set (if any) #
+                            x='' ; num_1 = '' ; num_2 = '' ; next = 0   # counters used for this loop of range only
+                            for key, val in enumerate(v):
+                                if val == ',':
+                                    x=''
+                                    next = 1
+                                if val in '1234567890':
+                                    if next == 1:
+                                        num_2 = num_2+val
+                                    else:
+                                        num_1 = num_1+val
+                                    pass
+                            try:
+                                num_1, num_2 = map(float,(num_1, num_2)) #; print(num_1, num_2)
+                                v_df = v_df[v_df[columns[k]] >= num_1] ; v_df = v_df[v_df[columns[k]] <= num_2]
+                                x='' ; num_1 = '' ; num_2 = '' ; next = 0  # resets all of the counters for range only
+                                ##___## print('_RG_ === ',len(v_df))
+                                if v_df.empty:
+                                    input_error = 'err_7'
+                                    return input_error
+                            except:
+                                input_error = ('err_list_1', v)
+                                return input_error
                     else:
                         v_df = v_df[v_df[columns[k]] == v]
 
